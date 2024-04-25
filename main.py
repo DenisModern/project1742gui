@@ -34,6 +34,9 @@ def handle_error(self, error):
         return
     print(error, self.serial_port.errorString())
 
+def handle_available_data(self):
+    if self.serial_port.isReadable():
+        print("444444")
 
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
@@ -78,7 +81,17 @@ class Ui_MainWindow(object):
             self.serial_port.readyRead.connect(handle_ready_read)
             self.serial_port.open(QtCore.QIODevice.ReadWrite)
             print(self.serial_port.readData(100))
-            print("Data read")
+            print("Port has been initialized")
+
+            # creating a timer object
+            self.timer = QtCore.QTimer()
+
+            # adding action to timer
+            self.timer.timeout.connect(lambda: handle_available_data(self))
+
+            # update the timer every tenth second
+            self.timer.start(10)
+
 
         elif self.pushButton.text() == "Отключиться":
             self.pushButton.setText("Подключиться")
