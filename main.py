@@ -36,7 +36,7 @@ def handle_error(self, error):
 
 def handle_available_data(self):
     if self.serial_port.isReadable():
-        print("444444")
+        print(self.serial_port.readLine().data().strip())
 
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
@@ -78,9 +78,9 @@ class Ui_MainWindow(object):
             self.serial_port = QtSerialPort.QSerialPort(self.comboBox.currentText())
             self.serial_port.setBaudRate(QtSerialPort.QSerialPort.Baud9600)
       #      self.serial_port.errorOccurred.connect(lambda: handle_error(self.serial_port.errorString()))
-            self.serial_port.readyRead.connect(handle_ready_read)
+      #      self.serial_port.readyRead.connect(lambda: handle_ready_read(self))
             self.serial_port.open(QtCore.QIODevice.ReadWrite)
-            print(self.serial_port.readData(100))
+      #      print(self.serial_port.readLine())
             print("Port has been initialized")
 
             # creating a timer object
@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
             self.timer.timeout.connect(lambda: handle_available_data(self))
 
             # update the timer every tenth second
-            self.timer.start(10)
+            self.timer.start(200)
 
 
         elif self.pushButton.text() == "Отключиться":
