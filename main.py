@@ -14,7 +14,33 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 import numpy as np
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, QtSerialPort
+
+def handle_ready_read(self):
+    while self.serial_port.canReadLine():
+        codec = QtCore.QTextCodec.codecForName("UTF-8")
+        line = codec.toUnicode(self.serial_port.readLine()).strip().strip('\x00')
+        try:
+            print(line)
+            value = float(line)
+        except ValueError as e:
+            print("error", e)
+        else:
+            self.update_plot(value)
+
+
+def handle_error(self, error):
+    if error == QtSerialPort.QSerialPort.NoError:
+        return
+    print(error, self.serial_port.errorString())
+
+
+def update_plot(self, value):
+    self.y = self.y[1:] + [value]
+    self.x = self.x[1:]
+    self.x.append(self.x[-1] + 1)
+    self.data_line.setData(self.x, self.y)
+
 
 class Canvas(FigureCanvas):
     def __init__(self, parent):
@@ -45,8 +71,19 @@ class Ui_MainWindow(object):
     def changeButtText(self):
         if self.pushButton.text() == "Подключиться":
             self.pushButton.setText("Отключиться")
+
+            self.serial_port = QtSerialPort.QSerialPort(self.comboBox.currentText())
+            self.serial_port.setBaudRate(QtSerialPort.QSerialPort.Baud9600)
+      #      self.serial_port.errorOccurred.connect(lambda: handle_error(self.serial_port.errorString()))
+            self.serial_port.readyRead.connect(handle_ready_read)
+            self.serial_port.open(QtCore.QIODevice.ReadWrite)
+            print(self.serial_port.readData(100))
+            print("Data read")
+
         elif self.pushButton.text() == "Отключиться":
             self.pushButton.setText("Подключиться")
+            self.serial_port.close()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -87,19 +124,16 @@ class Ui_MainWindow(object):
 
         self.comboBox.addItems(port_info)
 
-
-
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Данные с датчиков браслета"))
         self.label.setText(_translate("MainWindow", "Доступные com-порты"))
         self.pushButton.setText(_translate("MainWindow", "Подключиться"))
+
+
 
 
 if __name__ == "__main__":
