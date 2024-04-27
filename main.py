@@ -38,7 +38,7 @@ def handle_available_data(self):
     if self.serialInst.isOpen():
         packet = self.serialInst.readline()
         print()
-        print(packet.decode('ascii', errors='ignore').rstrip('\n'))
+        print(packet.decode('utf8', errors='ignore').rstrip('\n'))
 
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
@@ -74,7 +74,7 @@ class Canvas(FigureCanvas):
 
 class Ui_MainWindow(object):
     serialInst = serial.Serial()
-    serialInst.baudrate = 9600
+    serialInst.baudrate = 115200
     def changeButtText(self):
         if self.pushButton.text() == "Подключиться":
             self.pushButton.setText("Отключиться")
