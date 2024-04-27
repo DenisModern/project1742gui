@@ -55,7 +55,12 @@ def convert_input_data(self, str1):
 
 def display_input_data(self, Z1, cur_step):
     for i in range(len(Z1)-1):
-        self.Z[cur_step % 9][i] = Z1[i]
+        try:
+            self.Z[cur_step % 9][i] = Z1[i]
+        except ValueError:
+            continue
+    self.draw()
+    self.flush_events()
     x = np.arange(0, 32, 1)  # len = 10
     y = np.arange(0, 10, 1)  # len = 32
     self.ax.pcolormesh(x, y, self.Z)
@@ -85,15 +90,14 @@ class Canvas(FigureCanvas):
 
        # fig, self.ax = plt.subplots()
         self.ax.pcolormesh(x, y, self.Z)
-
         # creating a timer object
-        self.timer = QtCore.QTimer()
+        #self.timer = QtCore.QTimer()
 
         # adding action to timer
     #    self.timer.timeout.connect(lambda: convert_input_data(self, , self.cur_step))
 
         # update the timer every tenth second
-        self.timer.start(50)
+        #self.timer.start(50)
 
 
         #self.ax.grid()
@@ -116,7 +120,7 @@ class Ui_MainWindow(object):
             self.timer.timeout.connect(lambda: handle_available_data(self))
 
             # update the timer every tenth second
-            self.timer.start(50)
+            self.timer.start(200)
 
 
         elif self.pushButton.text() == "Отключиться":
