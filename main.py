@@ -35,8 +35,10 @@ def handle_error(self, error):
     print(error, self.serial_port.errorString())
 
 def handle_available_data(self):
-    if self.serial_port.isReadable():
-        print(self.serial_port.readLine().data().strip())
+    if self.serialInst.isOpen():
+        packet = self.serialInst.readline()
+        print()
+        print(packet.decode('ascii', errors='ignore').rstrip('\n'))
 
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
@@ -71,16 +73,21 @@ class Canvas(FigureCanvas):
         #self.ax.grid()
 
 class Ui_MainWindow(object):
+    serialInst = serial.Serial()
+    serialInst.baudrate = 9600
     def changeButtText(self):
         if self.pushButton.text() == "Подключиться":
             self.pushButton.setText("Отключиться")
 
-            self.serial_port = QtSerialPort.QSerialPort(self.comboBox.currentText())
-            self.serial_port.setBaudRate(QtSerialPort.QSerialPort.Baud9600)
+      #      self.serial_port = QtSerialPort.QSerialPort(self.comboBox.currentText())
+      #     self.serial_port.setBaudRate(QtSerialPort.QSerialPort.Baud9600)
       #      self.serial_port.errorOccurred.connect(lambda: handle_error(self.serial_port.errorString()))
       #      self.serial_port.readyRead.connect(lambda: handle_ready_read(self))
-            self.serial_port.open(QtCore.QIODevice.ReadWrite)
+      #      self.serial_port.open(QtCore.QIODevice.ReadWrite)
       #      print(self.serial_port.readLine())
+
+            self.serialInst.port = self.comboBox.currentText()
+            self.serialInst.open()
             print("Port has been initialized")
 
             # creating a timer object
