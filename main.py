@@ -37,14 +37,29 @@ def handle_error(self, error):
 def handle_available_data(self):
     if self.serialInst.isOpen():
         packet = self.serialInst.readline()
-        print()
-        print(packet.decode('utf8', errors='ignore').rstrip('\n'))
+        data =packet.decode('ascii', errors='ignore').rstrip('\n')
+        data = data.strip('\r')
+        print(data)
+        convert_input_data(chart, data)
 
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
     self.x = self.x[1:]
     self.x.append(self.x[-1] + 1)
     self.data_line.setData(self.x, self.y)
+
+def convert_input_data(self, str1):
+    Z1 = []
+    Z1 = str1.split()
+    display_input_data(self, Z1, self.cur_step)
+
+def display_input_data(self, Z1, cur_step):
+    for i in range(len(Z1)-1):
+        self.Z[cur_step % 9][i] = Z1[i]
+    x = np.arange(0, 32, 1)  # len = 10
+    y = np.arange(0, 10, 1)  # len = 32
+    self.ax.pcolormesh(x, y, self.Z)
+    self.cur_step+=1
 
 
 class Canvas(FigureCanvas):
@@ -54,21 +69,32 @@ class Canvas(FigureCanvas):
         self.setParent(parent)
 
         """ 
-        Вывод графика
+        
+        Вывод 
+        графика
+        
         """
-        np.random.seed(9684425)
-        Z = np.random.rand(6, 10)
-        Z1 = [[11, 3.1, 3.1, 2, 1, 2], [3, 2.1, 1.1, 2, 1, 1],[1, 2.1, 0.1, 2, 1, 1],
-              [13, 3.1, 3.1, 2, 1, 2], [2, 2.1, 2.1, 2, 1, 1],[2, 0.1, 0.1, 2, 1, 2],
-             [12, 3.1, 1, 2, 1, 2], [1, 2.1, 2.1, 2, 1, 4], [4, 2.1, 2.1, 2, 1, 2],
-              [2, 3.1, 3.1, 22, 2, 2]]
-        Z1 =np.transpose(Z1)
-        Z = Z1
-        x = np.arange(0.5, 11, 1)  # len = 11
-        y = np.arange(4.5, 11, 1)  # len = 7
+
+        Z1 = np.zeros((9, 31))
+
+        self.Z = Z1
+        x = np.arange(0, 32, 1)  # len = 32
+        y = np.arange(0, 10, 1)  # len = 11
+
+        self.cur_step = 0
 
        # fig, self.ax = plt.subplots()
-        self.ax.pcolormesh(x, y, Z)
+        self.ax.pcolormesh(x, y, self.Z)
+
+        # creating a timer object
+        self.timer = QtCore.QTimer()
+
+        # adding action to timer
+    #    self.timer.timeout.connect(lambda: convert_input_data(self, , self.cur_step))
+
+        # update the timer every tenth second
+        self.timer.start(50)
+
 
         #self.ax.grid()
 
@@ -90,7 +116,7 @@ class Ui_MainWindow(object):
             self.timer.timeout.connect(lambda: handle_available_data(self))
 
             # update the timer every tenth second
-            self.timer.start(200)
+            self.timer.start(50)
 
 
         elif self.pushButton.text() == "Отключиться":
@@ -139,6 +165,13 @@ class Ui_MainWindow(object):
 
         MainWindow.setStatusBar(self.statusbar)
 
+        """
+        
+        Создание 
+        графика
+        
+        """
+        global chart
         chart = Canvas(self.widget)
 
         port_info = []
