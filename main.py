@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
 
         elif self.pushButton.text() == "Отключиться":
             self.pushButton.setText("Подключиться")
-            self.serial_port.close()
+            self.serialInst.close()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
