@@ -79,13 +79,6 @@ class Ui_MainWindow(object):
         if self.pushButton.text() == "Подключиться":
             self.pushButton.setText("Отключиться")
 
-      #      self.serial_port = QtSerialPort.QSerialPort(self.comboBox.currentText())
-      #     self.serial_port.setBaudRate(QtSerialPort.QSerialPort.Baud9600)
-      #      self.serial_port.errorOccurred.connect(lambda: handle_error(self.serial_port.errorString()))
-      #      self.serial_port.readyRead.connect(lambda: handle_ready_read(self))
-      #      self.serial_port.open(QtCore.QIODevice.ReadWrite)
-      #      print(self.serial_port.readLine())
-
             self.serialInst.port = self.comboBox.currentText()
             self.serialInst.open()
             print("Port has been initialized")
@@ -109,31 +102,43 @@ class Ui_MainWindow(object):
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(10, 50, 171, 41))
         self.comboBox.setObjectName("comboBox")
+
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 191, 31))
+
         font = QtGui.QFont()
         font.setPointSize(13)
+
         self.label.setFont(font)
         self.label.setObjectName("label")
+
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(10, 110, 171, 51))
+
         font = QtGui.QFont()
         font.setPointSize(13)
+
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.changeButtText)
+
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(20, 170, 751, 391))
         self.widget.setAutoFillBackground(False)
         self.widget.setStyleSheet("border-color: rgb(8, 8, 8);")
         self.widget.setObjectName("widget")
+
         MainWindow.setCentralWidget(self.centralwidget)
+
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
+
         MainWindow.setStatusBar(self.statusbar)
+
         chart = Canvas(self.widget)
 
         port_info = []
@@ -152,8 +157,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "Данные с датчиков браслета"))
         self.label.setText(_translate("MainWindow", "Доступные com-порты"))
         self.pushButton.setText(_translate("MainWindow", "Подключиться"))
-
-
 
 
 if __name__ == "__main__":
