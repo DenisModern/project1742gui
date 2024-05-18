@@ -25,6 +25,7 @@ def convert_input_data(self, str1):
     Z1 = []
     Z1 = str1.split()
     display_input_data(self, Z1, self.cur_step)
+    return Z1
 
 """
 Функция перерисовывает график в реальном времени
