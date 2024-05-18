@@ -1,4 +1,3 @@
-from PyQt5 import QtWidgets
 from interface import *
 
 def update_plot(self, value):
