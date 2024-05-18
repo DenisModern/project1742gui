@@ -78,11 +78,11 @@ class Canvas(FigureCanvas):
 
         """
 
-        Z1 = np.zeros((9, 31))
+        Z1 = np.zeros((9, 31))   # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
 
         self.Z = Z1
         x = np.arange(0, 32, 1)  # len = 32, число каналов
-        y = np.arange(0, 10, 1)  # len = 11
+        y = np.arange(0, 10, 1)  # len = 11, число за раз выводимых показаний
 
         self.cur_step = 0
 
