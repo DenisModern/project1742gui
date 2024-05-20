@@ -1,3 +1,5 @@
+import sys
+
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,8 +20,12 @@ def handle_available_data(self, file):
     global isFileOpened
     if self.serialInst.isOpen():
         packet = self.serialInst.readline()
-        data =packet.decode('ascii', errors='ignore').rstrip('\n')
-        data = data.strip('\r')
+        data =packet.rstrip(b'\n')
+        #data = data.strip(b'\r')
+        data = list(data)
+        data = str(data)
+        data = data.replace('[', '')
+        data = data.replace(']', '')
         print(data)
         arr = convert_input_data(chart, data)
         data = {}
@@ -78,11 +84,11 @@ class Canvas(FigureCanvas):
 
         """
 
-        Z1 = np.zeros((9, 31))   # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
+        Z1 = np.zeros((9, 95))   # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
 
         self.Z = Z1
-        x = np.arange(0, 32, 1)  # len = 32, число каналов
-        y = np.arange(0, 10, 1)  # len = 11, число за раз выводимых показаний
+        x = np.arange(0, 96, 1)  # len = 96, число каналов
+        y = np.arange(0, 10, 1)  # len = 10, число за раз выводимых показаний
 
         self.cur_step = 0
 

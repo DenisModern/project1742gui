@@ -23,7 +23,7 @@ def handle_error(self, error):
 """
 def convert_input_data(self, str1):
     Z1 = []
-    Z1 = str1.split()
+    Z1 = str1.split(', ')
     display_input_data(self, Z1, self.cur_step)
     return Z1
 
@@ -31,14 +31,19 @@ def convert_input_data(self, str1):
 Функция перерисовывает график в реальном времени
 """
 def display_input_data(self, Z1, cur_step):
-    for i in range(len(Z1)-1):
+    l = 0
+    if len(Z1)>95:
+        l = 95
+    else:
+        l = len(Z1)
+    for i in range(l):
         try:
             self.Z[cur_step % 9][i] = Z1[i]
         except ValueError:
             continue
     self.draw()
     self.flush_events()
-    x = np.arange(0, 32, 1)  # len = 10
-    y = np.arange(0, 10, 1)  # len = 32
+    x = np.arange(0, 96, 1)  # len = 96
+    y = np.arange(0, 10, 1)  # len = 10
     self.ax.pcolormesh(x, y, self.Z)
     self.cur_step+=1
