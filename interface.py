@@ -1,233 +1,120 @@
+import sys
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5 import QtCore, QtGui, QtWidgets
-from handlers import convert_input_data
+from handlers import handle_ready_read, handle_error, convert_input_data
+from mainwindow_ui import Ui_MainWindow
 import json
 
-
 isFileOpened = False
-"""
-Функция считывает данные из серийного порта, 
-если он открыт, и декодирует их
-"""
-
-
-def handle_available_data(self, file):
-    global isFileOpened
-    if self.serialInst.isOpen():
-        packet = self.serialInst.readline()
-        data = packet.rstrip(b'\n')
-        # data = data.strip(b'\r')
-        data = list(data)
-        data = str(data)
-        data = data.replace('[', '')
-        data = data.replace(']', '')
-        print(data)
-        arr = convert_input_data(chart, data)
-        data = {}
-        # data[self.label_2.text()] = {}
-        # gestures = data[self.label_2.text()]
-        # if isFileOpened:
-        #    if data[self.label_2.text()] == {} or gestures['Жесты']['index'] != self.label_3:
-        #        data[self.label_2.text()] = {}
-        #        gestures = data[self.label_2.text()]
-        #        gestures['Жесты'] = []
-        #        gestures['Жесты'].append({
-        #            'name': 'жест',
-        #            'index': self.label_3.text(),
-        #            'data': []
-        #        })
-        #        json.dump(data, file, ensure_ascii=False)
-        #    else:
-        #        gestures = data[self.label_2.text()]
-        #        gestures['Жесты']['data'].append(arr)
-        #        json.dump(data, file, ensure_ascii=False)
-        if isFileOpened:
-            a = self.textEdit.toPlainText()
-            data[self.textEdit.toPlainText()] = {}
-            gestures = data[self.textEdit.toPlainText()]
-            gestures['Жесты'] = []
-            gestures['Жесты'].append({
-                'name': 'жест',
-                'index': self.textEdit_2.toPlainText(),
-                'data': arr
-            })
-            json.dump(data, file, ensure_ascii=False)
-
-
-def operateData(self, file):
-    global isFileOpened
-    if self.pushButton_2.text() == 'Начать запись':
-      #  global isFileOpened
-        isFileOpened = True
-        file = open('data.json', 'w', encoding='utf-8')
-        self.pushButton_2.setText('Остановить запись')
-    else:
-      #  global isFileOpened
-        isFileOpened = False
-        file.close()
-        self.pushButton_2.setText('Начать запись')
+chart = None
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         fig, self.ax = plt.subplots(figsize=(4, 2), dpi=190)
         super().__init__(fig)
         self.setParent(parent)
-
-        """ 
-        
-        Вывод 
-        графика
-
-        """
-
-        # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
-        Z1 = np.zeros((9, 95))
-
-        self.Z = Z1
-        x = np.arange(0, 96, 1)  # len = 96, число каналов
-        y = np.arange(0, 10, 1)  # len = 10, число за раз выводимых показаний
-
+        self.Z = np.zeros((9, 95))
+        x = np.arange(0, 96, 1)
+        y = np.arange(0, 10, 1)
         self.cur_step = 0
-
         self.ax.pcolormesh(x, y, self.Z)
 
+    def update_plot(self, data):
+        self.Z[self.cur_step % 9] = data
+        self.cur_step += 1
+        self.ax.pcolormesh(np.arange(0, 96, 1), np.arange(0, 10, 1), self.Z)
+        self.draw()
 
-class Ui_MainWindow(object):
-    serialInst = serial.Serial()
-    serialInst.baudrate = 115200
 
-    def changeButtText(self, file):
-        if self.pushButton.text() == "Подключиться":
-            self.pushButton.setText("Отключиться")
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.setupUi(self)
 
-            self.serialInst.port = self.comboBox.currentText()
-            self.serialInst.open()
-            print("Port has been initialized")
+        self.serialInst = serial.Serial()
+        self.serialInst.baudrate = 115200
 
-            # создание таймера
-            self.timer = QtCore.QTimer()
+        # Найти виджет для графика и добавить в него Canvas
+        self.chart = Canvas(self)
+        self.gridLayout_2.addWidget(self.chart, 3, 5, 1, 2)
 
-            # добавление действия по истечению времени
-            self.timer.timeout.connect(
-                lambda: handle_available_data(self, file))
+        self.connect_button.clicked.connect(self.connect_serial)
+        self.disconnect_button.clicked.connect(self.disconnect_serial)
+        self.startrecording_button.clicked.connect(self.operate_data)
 
-            # время (обновления) таймера
-            self.timer.start(50)
+        self.comport_combobox.addItems(
+            [port.device for port in serial.tools.list_ports.comports()])
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(lambda: self.handle_available_data())
 
-        elif self.pushButton.text() == "Отключиться":
-            self.pushButton.setText("Подключиться")
-            self.serialInst.close()
+    def connect_serial(self):
+        self.serialInst.port = self.comport_combobox.currentText()
+        self.serialInst.open()
+        print("Port has been initialized")
+        self.timer.start(50)
+        self.connect_button.setEnabled(False)
+        self.disconnect_button.setEnabled(True)
 
-    def setupUi(self, MainWindow):
-        file = open('data.json', 'w', encoding='utf-8')
+    def disconnect_serial(self):
+        self.serialInst.close()
+        self.timer.stop()
+        print("Port has been closed")
+        self.connect_button.setEnabled(True)
+        self.disconnect_button.setEnabled(False)
 
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
+    def operate_data(self):
+        global isFileOpened
+        if self.startrecording_button.text() == 'Начать запись':
+            isFileOpened = True
+            self.file = open('data.json', 'w', encoding='utf-8')
+            self.startrecording_button.setText('Остановить запись')
+        else:
+            isFileOpened = False
+            self.file.close()
+            self.startrecording_button.setText('Начать запись')
 
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(10, 50, 171, 41))
-        self.comboBox.setObjectName("comboBox")
+    def handle_available_data(self):
+        if self.serialInst.isOpen():
+            packet = self.serialInst.readline()
+            data = packet.rstrip(b'\n')
+            data = list(data)
+            data = str(data)
+            data = data.replace('[', '').replace(']', '')
+            print(data)
+            arr = convert_input_data(self.chart, data)
+            if isFileOpened:
+                json_data = {self.user_lineedit.text(): {"gestures": [
+                    {"name": "gesture", "index": self.gesture_lineedit.text(), "data": arr}]}}
+                json.dump(json_data, self.file, ensure_ascii=False)
 
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(10, 10, 191, 31))
+    def load_json_data(self, json_data):
+        model = QtGui.QStandardItemModel()
+        self.data_treeview.setModel(model)
+        self.populate_model(json_data, model.invisibleRootItem())
 
-        font = QtGui.QFont()
-        font.setPointSize(13)
+    def populate_model(self, json_data, parent):
+        if isinstance(json_data, dict):
+            for key, value in json_data.items():
+                key_item = QtGui.QStandardItem(key)
+                if isinstance(value, (dict, list)):
+                    parent.appendRow(key_item)
+                    self.populate_model(value, key_item)
+                else:
+                    value_item = QtGui.QStandardItem(str(value))
+                    parent.appendRow([key_item, value_item])
+        elif isinstance(json_data, list):
+            for index, value in enumerate(json_data):
+                key_item = QtGui.QStandardItem(f"[{index}]")
+                if isinstance(value, (dict, list)):
+                    parent.appendRow(key_item)
+                    self.populate_model(value, key_item)
+                else:
+                    value_item = QtGui.QStandardItem(str(value))
+                    parent.appendRow([key_item, value_item])
 
-        self.label.setFont(font)
-        self.label.setObjectName("label")
-
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(10, 110, 171, 51))
-
-        font = QtGui.QFont()
-        font.setPointSize(13)
-
-        self.pushButton.setFont(font)
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton.clicked.connect(lambda: self.changeButtText(file))
-
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(20, 170, 751, 391))
-        self.widget.setAutoFillBackground(False)
-        self.widget.setStyleSheet("border-color: rgb(8, 8, 8);")
-        self.widget.setObjectName("widget")
-
-        MainWindow.setCentralWidget(self.centralwidget)
-
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(220, 110, 171, 51))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.pushButton_2.setFont(font)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(lambda: operateData(self, file))
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(430, 10, 111, 31))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(680, 10, 111, 31))
-        font = QtGui.QFont()
-        font.setPointSize(13)
-        self.label_3.setFont(font)
-        self.label_3.setObjectName("label_3")
-        self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit.setGeometry(QtCore.QRect(420, 50, 141, 31))
-        self.textEdit.setObjectName("textEdit")
-        self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
-        self.textEdit_2.setGeometry(QtCore.QRect(630, 50, 141, 31))
-        self.textEdit_2.setObjectName("textEdit_2")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-
-        MainWindow.setStatusBar(self.statusbar)
-
-        """
-
-        Создание 
-        графика
-
-        """
-
-        global chart
-        chart = Canvas(self.widget)
-
-        """
-        
-        Получение и вывод доступных ком-портов
-        
-        """
-        port_info = []
-        ports = serial.tools.list_ports.comports()
-        for port, desc, hwid in sorted(ports):
-            print("{}: {} [{}]".format(port, desc, hwid))
-            port_info.append(port)
-
-        self.comboBox.addItems(port_info)
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate(
-            "MainWindow", "Данные с датчиков браслета"))
-        self.label.setText(_translate("MainWindow", "Доступные com-порты"))
-        self.pushButton.setText(_translate("MainWindow", "Подключиться"))
-        self.pushButton_2.setText(_translate("MainWindow", "Начать запись"))
-        self.label_2.setText(_translate("MainWindow", "Пользователь"))
-        self.label_3.setText(_translate("MainWindow", "Жест"))
+    def update_plot(self, value):
+        self.chart.update_plot(value)

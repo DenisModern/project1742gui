@@ -14,173 +14,106 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="connect_label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Порт</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="comport_combobox">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>10</y>
-      <width>82</width>
-      <height>28</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="connect_button">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>10</y>
-      <width>83</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Подключиться</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="disconnect_button">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>10</y>
-      <width>83</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Отключиться</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="startrecording_button">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>10</y>
-      <width>531</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Начать запись</string>
-    </property>
-   </widget>
-   <widget class="QTreeView" name="data_treeview">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>371</width>
-      <height>491</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="user_lineedit">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>60</y>
-      <width>171</width>
-      <height>28</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="user_label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Испытуемый</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="adduser_button">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>60</y>
-      <width>83</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Добавить</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="gesture1_label">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>81</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Жест</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="gesture_lineedit">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>100</y>
-      <width>171</width>
-      <height>28</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="addgestre_button">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>100</y>
-      <width>83</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Добавить</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="gesture_commbobox">
-    <property name="geometry">
-     <rect>
-      <x>700</x>
-      <y>90</y>
-      <width>481</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="gesture2_label">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>90</y>
-      <width>41</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Жест</string>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,1,10">
+      <item row="1" column="0">
+       <widget class="QLabel" name="user_label">
+        <property name="text">
+         <string>Испытуемый</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="connect_label">
+        <property name="text">
+         <string>Порт</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="connect_button">
+        <property name="text">
+         <string>Подключиться</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="user_lineedit"/>
+      </item>
+      <item row="3" column="0" colspan="4">
+       <widget class="QTreeView" name="data_treeview"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="gesture_lineedit"/>
+      </item>
+      <item row="1" column="6">
+       <widget class="QComboBox" name="gesture_commbobox"/>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="adduser_button">
+        <property name="text">
+         <string>Добавить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="5" colspan="2">
+       <widget class="QWidget" name="widget" native="true"/>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="addgestre_button">
+        <property name="text">
+         <string>Добавить</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comport_combobox"/>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="disconnect_button">
+        <property name="text">
+         <string>Отключиться</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="gesture1_label">
+        <property name="text">
+         <string>Жест</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QLabel" name="gesture2_label">
+        <property name="text">
+         <string>Жест</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5" colspan="2">
+       <widget class="QPushButton" name="startrecording_button">
+        <property name="text">
+         <string>Начать запись</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4" rowspan="4">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
