@@ -1,5 +1,3 @@
-import sys
-
 import serial.tools.list_ports
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,8 +18,8 @@ def handle_available_data(self, file):
     global isFileOpened
     if self.serialInst.isOpen():
         packet = self.serialInst.readline()
-        data =packet.rstrip(b'\n')
-        #data = data.strip(b'\r')
+        data = packet.rstrip(b'\n')
+        # data = data.strip(b'\r')
         data = list(data)
         data = str(data)
         data = data.replace('[', '')
@@ -29,9 +27,9 @@ def handle_available_data(self, file):
         print(data)
         arr = convert_input_data(chart, data)
         data = {}
-        #data[self.label_2.text()] = {}
-        #gestures = data[self.label_2.text()]
-        #if isFileOpened:
+        # data[self.label_2.text()] = {}
+        # gestures = data[self.label_2.text()]
+        # if isFileOpened:
         #    if data[self.label_2.text()] == {} or gestures['Жесты']['index'] != self.label_3:
         #        data[self.label_2.text()] = {}
         #        gestures = data[self.label_2.text()]
@@ -47,29 +45,31 @@ def handle_available_data(self, file):
         #        gestures['Жесты']['data'].append(arr)
         #        json.dump(data, file, ensure_ascii=False)
         if isFileOpened:
-                a = self.textEdit.toPlainText()
-                data[self.textEdit.toPlainText()] = {}
-                gestures = data[self.textEdit.toPlainText()]
-                gestures['Жесты'] = []
-                gestures['Жесты'].append({
-                    'name': 'жест',
-                    'index': self.textEdit_2.toPlainText(),
-                    'data': arr
-                })
-                json.dump(data, file, ensure_ascii=False)
+            a = self.textEdit.toPlainText()
+            data[self.textEdit.toPlainText()] = {}
+            gestures = data[self.textEdit.toPlainText()]
+            gestures['Жесты'] = []
+            gestures['Жесты'].append({
+                'name': 'жест',
+                'index': self.textEdit_2.toPlainText(),
+                'data': arr
+            })
+            json.dump(data, file, ensure_ascii=False)
+
 
 def operateData(self, file):
-        global isFileOpened
-        if self.pushButton_2.text()=='Начать запись':
-          #  global isFileOpened
-            isFileOpened = True
-            file = open('data.json', 'w', encoding='utf-8')
-            self.pushButton_2.setText('Остановить запись')
-        else:
-          #  global isFileOpened
-            isFileOpened = False
-            file.close()
-            self.pushButton_2.setText('Начать запись')
+    global isFileOpened
+    if self.pushButton_2.text() == 'Начать запись':
+      #  global isFileOpened
+        isFileOpened = True
+        file = open('data.json', 'w', encoding='utf-8')
+        self.pushButton_2.setText('Остановить запись')
+    else:
+      #  global isFileOpened
+        isFileOpened = False
+        file.close()
+        self.pushButton_2.setText('Начать запись')
+
 
 class Canvas(FigureCanvas):
     def __init__(self, parent):
@@ -84,7 +84,8 @@ class Canvas(FigureCanvas):
 
         """
 
-        Z1 = np.zeros((9, 95))   # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
+        # инициализация матрицы, на 1 меньше по осям по сравнению с x и y
+        Z1 = np.zeros((9, 95))
 
         self.Z = Z1
         x = np.arange(0, 96, 1)  # len = 96, число каналов
@@ -111,17 +112,15 @@ class Ui_MainWindow(object):
             self.timer = QtCore.QTimer()
 
             # добавление действия по истечению времени
-            self.timer.timeout.connect(lambda: handle_available_data(self, file))
+            self.timer.timeout.connect(
+                lambda: handle_available_data(self, file))
 
             # время (обновления) таймера
             self.timer.start(50)
 
-
         elif self.pushButton.text() == "Отключиться":
             self.pushButton.setText("Подключиться")
             self.serialInst.close()
-
-
 
     def setupUi(self, MainWindow):
         file = open('data.json', 'w', encoding='utf-8')
@@ -225,7 +224,8 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Данные с датчиков браслета"))
+        MainWindow.setWindowTitle(_translate(
+            "MainWindow", "Данные с датчиков браслета"))
         self.label.setText(_translate("MainWindow", "Доступные com-порты"))
         self.pushButton.setText(_translate("MainWindow", "Подключиться"))
         self.pushButton_2.setText(_translate("MainWindow", "Начать запись"))

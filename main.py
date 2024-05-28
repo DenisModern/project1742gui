@@ -1,5 +1,6 @@
 from interface import *
 
+
 def update_plot(self, value):
     self.y = self.y[1:] + [value]
     self.x = self.x[1:]
