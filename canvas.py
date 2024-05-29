@@ -36,10 +36,11 @@ cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, chart_height=8, chart_width=12, sensitivity=1.0):
+    def __init__(self, parent=None, chart_height=8, chart_width=12, min_value=-32768, max_value=32767):
         self.chart_height = chart_height
         self.chart_width = chart_width
-        self.sensitivity = sensitivity
+        self.min_value = min_value
+        self.max_value = max_value
         fig, self.ax = plt.subplots(figsize=(4, 2), dpi=190)
         super().__init__(fig)
         self.setParent(parent)
@@ -50,8 +51,8 @@ class Canvas(FigureCanvas):
             self.Z,
             shading='flat',
             cmap=cmap,
-            vmin=0,
-            vmax=255
+            vmin=self.min_value,
+            vmax=self.max_value
         )
         self.ani = FuncAnimation(fig, self.animate, interval=100)
         self.cur_step = 0
@@ -68,19 +69,82 @@ class Canvas(FigureCanvas):
         self.ax.xaxis.label.set_color('#E0E0E0')  # Цвет подписи оси X
         self.ax.yaxis.label.set_color('#E0E0E0')  # Цвет подписи оси Y
 
-    def set_sensitivity(self, sensitivity):
-        self.sensitivity = sensitivity
+    def set_min_value(self, min_value):
+        self.min_value = min_value
+        self.cax.set_clim(vmin=self.min_value, vmax=self.max_value)
+        self.draw()
+
+    def set_max_value(self, max_value):
+        self.max_value = max_value
+        self.cax.set_clim(vmin=self.min_value, vmax=self.max_value)
+        self.draw()
 
     def update_plot(self, data):
         reshaped_data = np.array(data).reshape(
             (self.chart_height, self.chart_width))
-        scaled_data = reshaped_data * self.sensitivity
-        # Обрезаем значения, чтобы они оставались в пределах 0-255
-        np.clip(scaled_data, 0, 255, out=scaled_data)
         self.Z[self.cur_step %
-               self.chart_height] = scaled_data[self.cur_step % self.chart_height]
+               self.chart_height] = reshaped_data[self.cur_step % self.chart_height]
         self.cur_step += 1
 
     def animate(self, i):
         self.cax.set_array(self.Z.flatten())
         return self.cax,
+
+
+class AnimatedCanvas(FigureCanvas):
+    def __init__(self, parent=None, channel=0, maxlen=100):
+        self.channel = channel
+        self.maxlen = maxlen
+        self.data = [0] * maxlen
+
+        fig, self.ax = plt.subplots(figsize=(4, 2), dpi=100)
+        super().__init__(fig)
+        self.setParent(parent)
+
+        self.line, = self.ax.plot(self.data)
+        self.ax.set_ylim(-32768, 32767)
+        self.ax.set_xlim(0, maxlen)
+
+        self.ani = FuncAnimation(fig, self.animate, interval=100)
+
+    def update_channel(self, channel):
+        self.channel = channel
+
+    def animate(self, i):
+        self.line.set_ydata(self.data)
+        self.draw()
+        return self.line,
+
+    def update_plot(self, new_data):
+        self.data = self.data[1:] + [new_data[self.channel]]
+
+
+class AverageCanvas(FigureCanvas):
+    def __init__(self, parent=None, channels=range(16), maxlen=100):
+        self.channels = channels
+        self.maxlen = maxlen
+        self.data = np.zeros((maxlen, len(channels)))
+
+        fig, self.ax = plt.subplots(figsize=(4, 2), dpi=100)
+        super().__init__(fig)
+        self.setParent(parent)
+
+        self.lines = []
+        for i in range(len(channels)):
+            line, = self.ax.plot(self.data[:, i])
+            self.lines.append(line)
+        self.ax.set_ylim(-32768, 32767)
+        self.ax.set_xlim(0, maxlen)
+
+        self.ani = FuncAnimation(fig, self.animate, interval=100)
+
+    def animate(self, i):
+        for i, line in enumerate(self.lines):
+            line.set_ydata(self.data[:, i])
+        self.draw()
+        return self.lines
+
+    def update_plot(self, new_data):
+        avg_data = [np.mean(new_data[ch:ch + 16]) for ch in self.channels]
+        self.data = np.roll(self.data, -1, axis=0)
+        self.data[-1, :] = avg_data
