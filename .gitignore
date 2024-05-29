@@ -15500,3 +15500,6 @@ env/share/jupyter/nbconvert/templates/webpdf/conf.json
 env/share/jupyter/nbconvert/templates/webpdf/index.pdf.j2
 env/share/man/man1/ipython.1
 env/share/man/man1/ttx.1
+mainwindow.ui.autosave
+__pycache__/canvas.cpython-310.pyc
+__pycache__/mainwindow_ui.cpython-310.pyc

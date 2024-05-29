@@ -49,6 +49,9 @@ def handle_ready_read(self):
 
                 avg_data = np.mean(recent_data, axis=0).astype(int).tolist()
                 self.update_plot(avg_data)
+
+                # Вывод данных в com_textedit
+                self.com_textedit.appendPlainText(str(complete_data))
             else:
                 print(f"Incorrect data length: {len(complete_data)}")
 

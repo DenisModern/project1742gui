@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1316</width>
-    <height>639</height>
+    <height>727</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,9 +78,9 @@ QSlider::groove:horizontal {
 }
 </string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,5,0,2">
     <item row="0" column="1">
-     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,1,0,1">
+     <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0,0,0,1,0,1">
       <item row="3" column="0" rowspan="2" colspan="3">
        <widget class="QTreeView" name="data_treeview"/>
       </item>
@@ -297,8 +297,11 @@ QSlider::groove:horizontal {
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <property name="rightMargin">
-       <number>300</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QWidget" name="avg1" native="true"/>
@@ -307,7 +310,14 @@ QSlider::groove:horizontal {
        <widget class="QWidget" name="avg2" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="avg3" native="true"/>
+       <widget class="QWidget" name="avg3" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QWidget" name="avg4" native="true"/>

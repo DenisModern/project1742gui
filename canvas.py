@@ -41,7 +41,7 @@ class Canvas(FigureCanvas):
         self.chart_width = chart_width
         self.min_value = min_value
         self.max_value = max_value
-        fig, self.ax = plt.subplots(figsize=(4, 2), dpi=190)
+        fig, self.ax = plt.subplots(figsize=(2, 2), dpi=190)
         super().__init__(fig)
         self.setParent(parent)
         self.Z = np.zeros((self.chart_height, self.chart_width))
@@ -101,9 +101,19 @@ class AnimatedCanvas(FigureCanvas):
         super().__init__(fig)
         self.setParent(parent)
 
-        self.line, = self.ax.plot(self.data)
-        self.ax.set_ylim(-32768, 32767)
+        self.line, = self.ax.plot(self.data, color='#1E90FF')
         self.ax.set_xlim(0, maxlen)
+
+        self.ax.set_facecolor("#2E2E2E")  # Темный фон графика
+        self.ax.figure.patch.set_facecolor('#2E2E2E')  # Темный фон фигуры
+        self.ax.tick_params(colors="#E0E0E0")  # Цвет меток осей
+        self.ax.spines['bottom'].set_color('#E0E0E0')
+        self.ax.spines['top'].set_color('#E0E0E0')
+        self.ax.spines['right'].set_color('#E0E0E0')
+        self.ax.spines['left'].set_color('#E0E0E0')
+        self.ax.title.set_color('#E0E0E0')  # Цвет заголовка графика
+        self.ax.xaxis.label.set_color('#E0E0E0')  # Цвет подписи оси X
+        self.ax.yaxis.label.set_color('#E0E0E0')  # Цвет подписи оси Y
 
         self.ani = FuncAnimation(fig, self.animate, interval=100)
 
@@ -112,6 +122,8 @@ class AnimatedCanvas(FigureCanvas):
 
     def animate(self, i):
         self.line.set_ydata(self.data)
+        self.ax.relim()
+        self.ax.autoscale_view()  # Автоматическое масштабирование по оси Y
         self.draw()
         return self.line,
 
@@ -125,22 +137,37 @@ class AverageCanvas(FigureCanvas):
         self.maxlen = maxlen
         self.data = np.zeros((maxlen, len(channels)))
 
-        fig, self.ax = plt.subplots(figsize=(4, 2), dpi=100)
+        fig, self.ax = plt.subplots(
+            figsize=(12, 1), dpi=100)  # Измените размер фигуры
         super().__init__(fig)
         self.setParent(parent)
 
         self.lines = []
         for i in range(len(channels)):
-            line, = self.ax.plot(self.data[:, i])
+            # Установите нужную толщину линии
+            line, = self.ax.plot(
+                self.data[:, i], color='#1E90FF', linewidth=0.5)
             self.lines.append(line)
-        self.ax.set_ylim(-32768, 32767)
         self.ax.set_xlim(0, maxlen)
+
+        self.ax.set_facecolor("#2E2E2E")  # Темный фон графика
+        self.ax.figure.patch.set_facecolor('#2E2E2E')  # Темный фон фигуры
+        self.ax.tick_params(colors="#E0E0E0")  # Цвет меток осей
+        self.ax.spines['bottom'].set_color('#E0E0E0')
+        self.ax.spines['top'].set_color('#E0E0E0')
+        self.ax.spines['right'].set_color('#E0E0E0')
+        self.ax.spines['left'].set_color('#E0E0E0')
+        self.ax.title.set_color('#E0E0E0')  # Цвет заголовка графика
+        self.ax.xaxis.label.set_color('#E0E0E0')  # Цвет подписи оси X
+        self.ax.yaxis.label.set_color('#E0E0E0')  # Цвет подписи оси Y
 
         self.ani = FuncAnimation(fig, self.animate, interval=100)
 
     def animate(self, i):
         for i, line in enumerate(self.lines):
             line.set_ydata(self.data[:, i])
+        self.ax.relim()
+        self.ax.autoscale_view()  # Автоматическое масштабирование по оси Y
         self.draw()
         return self.lines
 

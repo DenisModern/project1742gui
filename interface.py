@@ -18,6 +18,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        self.showMaximized()
+
         self.serialInst = serial.Serial()
         self.serialInst.baudrate = 115200
         self.is_recording = False
@@ -105,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.serialInst.port = self.comport_combobox.currentText()
             self.serialInst.open()
             self.update_state("Порт был инициализирован")
-            self.timer.start(10)
+            self.timer.start(1)
             self.connect_button.setText("Отключиться")
             self.connected = True
         except Exception as e:

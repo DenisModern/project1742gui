@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1316, 639)
+        MainWindow.resize(1316, 727)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("QWidget#centralwidget {\n"
 "    background-color: #2E2E2E;  /* Темный фон */\n"
@@ -194,7 +194,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setColumnStretch(6, 1)
         self.gridLayout_3.addLayout(self.gridLayout_2, 0, 1, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setContentsMargins(-1, -1, 300, -1)
+        self.verticalLayout_2.setContentsMargins(0, -1, 0, -1)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.avg1 = QtWidgets.QWidget(self.centralwidget)
@@ -204,6 +204,7 @@ class Ui_MainWindow(object):
         self.avg2.setObjectName("avg2")
         self.verticalLayout_2.addWidget(self.avg2)
         self.avg3 = QtWidgets.QWidget(self.centralwidget)
+        self.avg3.setMinimumSize(QtCore.QSize(100, 0))
         self.avg3.setObjectName("avg3")
         self.verticalLayout_2.addWidget(self.avg3)
         self.avg4 = QtWidgets.QWidget(self.centralwidget)
@@ -216,6 +217,8 @@ class Ui_MainWindow(object):
         self.avg6.setObjectName("avg6")
         self.verticalLayout_2.addWidget(self.avg6)
         self.gridLayout_3.addLayout(self.verticalLayout_2, 0, 3, 1, 1)
+        self.gridLayout_3.setColumnStretch(1, 5)
+        self.gridLayout_3.setColumnStretch(3, 2)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
