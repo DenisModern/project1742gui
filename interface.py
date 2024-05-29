@@ -1,37 +1,18 @@
-import sys
 import serial.tools.list_ports
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5 import QtCore, QtGui, QtWidgets
-from handlers import handle_ready_read, handle_error, convert_input_data
+from handlers import handle_ready_read, handle_error, convert_input_data, num_channels, chart_height, chart_width
 from mainwindow_ui import Ui_MainWindow
 import json
+# Предполагаем, что Canvas класс теперь находится в отдельном файле canvas.py
+from canvas import Canvas
 
 isFileOpened = False
 chart = None
 
 
-class Canvas(FigureCanvas):
-    def __init__(self, parent=None):
-        fig, self.ax = plt.subplots(figsize=(4, 2), dpi=190)
-        super().__init__(fig)
-        self.setParent(parent)
-        self.Z = np.zeros((9, 95))
-        x = np.arange(0, 96, 1)
-        y = np.arange(0, 10, 1)
-        self.cur_step = 0
-        self.ax.pcolormesh(x, y, self.Z)
-
-    def update_plot(self, data):
-        self.Z[self.cur_step % 9] = data
-        self.cur_step += 1
-        self.ax.pcolormesh(np.arange(0, 96, 1), np.arange(0, 10, 1), self.Z)
-        self.draw()
-
-
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, sensitivity=1.0):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
@@ -39,32 +20,42 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.serialInst.baudrate = 115200
 
         # Найти виджет для графика и добавить в него Canvas
-        self.chart = Canvas(self)
-        self.gridLayout_2.addWidget(self.chart, 3, 5, 1, 2)
+        self.chart = Canvas(self, chart_height=chart_height,
+                            chart_width=chart_width, sensitivity=sensitivity)
+        self.gridLayout_2.addWidget(self.chart, 2, 6, 2, 2)
 
-        self.connect_button.clicked.connect(self.connect_serial)
-        self.disconnect_button.clicked.connect(self.disconnect_serial)
+        self.connect_button.clicked.connect(self.toggle_connection)
         self.startrecording_button.clicked.connect(self.operate_data)
+        self.sensetivity_slider.valueChanged.connect(self.update_sensitivity)
 
         self.comport_combobox.addItems(
             [port.device for port in serial.tools.list_ports.comports()])
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(lambda: self.handle_available_data())
 
+        self.connected = False
+        self.update_sensitivity()
+
+    def toggle_connection(self):
+        if not self.connected:
+            self.connect_serial()
+        else:
+            self.disconnect_serial()
+
     def connect_serial(self):
         self.serialInst.port = self.comport_combobox.currentText()
         self.serialInst.open()
         print("Port has been initialized")
         self.timer.start(50)
-        self.connect_button.setEnabled(False)
-        self.disconnect_button.setEnabled(True)
+        self.connect_button.setText("Отключиться")
+        self.connected = True
 
     def disconnect_serial(self):
         self.serialInst.close()
         self.timer.stop()
         print("Port has been closed")
-        self.connect_button.setEnabled(True)
-        self.disconnect_button.setEnabled(False)
+        self.connect_button.setText("Подключиться")
+        self.connected = False
 
     def operate_data(self):
         global isFileOpened
@@ -79,17 +70,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def handle_available_data(self):
         if self.serialInst.isOpen():
-            packet = self.serialInst.readline()
-            data = packet.rstrip(b'\n')
-            data = list(data)
-            data = str(data)
-            data = data.replace('[', '').replace(']', '')
-            print(data)
-            arr = convert_input_data(self.chart, data)
-            if isFileOpened:
-                json_data = {self.user_lineedit.text(): {"gestures": [
-                    {"name": "gesture", "index": self.gesture_lineedit.text(), "data": arr}]}}
-                json.dump(json_data, self.file, ensure_ascii=False)
+            handle_ready_read(self)
+
+    def update_sensitivity(self):
+        sensitivity_value = self.sensetivity_slider.value() / 10  # Диапазон от 0.1 до 3.0
+        self.chart.set_sensitivity(sensitivity_value)
+        print(f"Updated sensitivity to {sensitivity_value}")
 
     def load_json_data(self, json_data):
         model = QtGui.QStandardItemModel()

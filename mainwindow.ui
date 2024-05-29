@@ -14,27 +14,80 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget#centralwidget {
+    background-color: #2E2E2E;  /* Темный фон */
+    color: #E0E0E0;  /* Светлый текст */
+}
+
+QLabel {
+    color: #E0E0E0;  /* Светлый текст */
+    font-size: 14px;
+}
+
+QPushButton {
+    background-color: #3A3A3A;  /* Темный фон кнопок */
+    color: #E0E0E0;  /* Светлый текст */
+    border: 1px solid #1E90FF;  /* Ледяной синий бордюр */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+QPushButton:hover {
+    background-color: #1E90FF;  /* Ледяной синий при наведении */
+}
+
+QLineEdit, QComboBox, QTreeView, QSlider::groove:horizontal {
+    background-color: #3A3A3A;  /* Темный фон для ввода текста, выпадающих списков и слайдеров */
+    color: #E0E0E0;  /* Светлый текст */
+    border: 1px solid #1E90FF;  /* Ледяной синий бордюр */
+    padding: 5px;
+    border-radius: 5px;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left-width: 1px;
+    border-left-color: #1E90FF;
+    border-left-style: solid;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+QComboBox::down-arrow {
+    image: url(down_arrow.png);  /* Путь к иконке стрелки вниз */
+    width: 12px;
+    height: 12px;
+}
+
+QSlider::handle:horizontal {
+    background: #1E90FF;  /* Ледяной синий бегунок */
+    border: 1px solid #3A3A3A;
+    width: 10px;
+    margin: -5px 0; /* Уменьшение области клика */
+    border-radius: 5px;
+}
+
+QSlider::groove:horizontal {
+    height: 10px;
+    background: #3A3A3A;
+    border: 1px solid #1E90FF;
+    border-radius: 5px;
+}
+</string>
+   </property>
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,1,10">
+     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0,0,0,2,0,2">
+      <item row="0" column="1">
+       <widget class="QComboBox" name="comport_combobox"/>
+      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="user_label">
         <property name="text">
          <string>Испытуемый</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="connect_label">
-        <property name="text">
-         <string>Порт</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="connect_button">
-        <property name="text">
-         <string>Подключиться</string>
         </property>
        </widget>
       </item>
@@ -44,22 +97,6 @@
       <item row="3" column="0" colspan="4">
        <widget class="QTreeView" name="data_treeview"/>
       </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="gesture_lineedit"/>
-      </item>
-      <item row="1" column="6">
-       <widget class="QComboBox" name="gesture_commbobox"/>
-      </item>
-      <item row="1" column="2">
-       <widget class="QPushButton" name="adduser_button">
-        <property name="text">
-         <string>Добавить</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="5" colspan="2">
-       <widget class="QWidget" name="widget" native="true"/>
-      </item>
       <item row="2" column="2">
        <widget class="QPushButton" name="addgestre_button">
         <property name="text">
@@ -67,34 +104,20 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="comport_combobox"/>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="gesture_lineedit"/>
       </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="disconnect_button">
+      <item row="0" column="0">
+       <widget class="QLabel" name="connect_label">
         <property name="text">
-         <string>Отключиться</string>
+         <string>Порт</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="gesture1_label">
+      <item row="1" column="2">
+       <widget class="QPushButton" name="adduser_button">
         <property name="text">
-         <string>Жест</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5">
-       <widget class="QLabel" name="gesture2_label">
-        <property name="text">
-         <string>Жест</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5" colspan="2">
-       <widget class="QPushButton" name="startrecording_button">
-        <property name="text">
-         <string>Начать запись</string>
+         <string>Добавить</string>
         </property>
        </widget>
       </item>
@@ -110,6 +133,70 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="gesture1_label">
+        <property name="text">
+         <string>Жест</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="7">
+       <widget class="QLabel" name="gesture2_label">
+        <property name="text">
+         <string>Жест</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="8">
+       <widget class="QComboBox" name="gesture_commbobox"/>
+      </item>
+      <item row="1" column="6">
+       <widget class="QComboBox" name="user_combobox"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="connect_button">
+        <property name="text">
+         <string>Подключиться</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Пользователь</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="5" rowspan="2" colspan="4">
+       <widget class="QWidget" name="activitymap" native="true"/>
+      </item>
+      <item row="0" column="5" colspan="4">
+       <widget class="QPushButton" name="startrecording_button">
+        <property name="text">
+         <string>Начать запись</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Чувствительность</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="6" colspan="3">
+       <widget class="QSlider" name="sensetivity_slider">
+        <property name="maximum">
+         <number>30</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

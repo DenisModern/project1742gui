@@ -16,60 +16,134 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1194, 643)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setStyleSheet("QWidget#centralwidget {\n"
+"    background-color: #2E2E2E;  /* Темный фон */\n"
+"    color: #E0E0E0;  /* Светлый текст */\n"
+"}\n"
+"\n"
+"QLabel {\n"
+"    color: #E0E0E0;  /* Светлый текст */\n"
+"    font-size: 14px;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: #3A3A3A;  /* Темный фон кнопок */\n"
+"    color: #E0E0E0;  /* Светлый текст */\n"
+"    border: 1px solid #1E90FF;  /* Ледяной синий бордюр */\n"
+"    padding: 5px 10px;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #1E90FF;  /* Ледяной синий при наведении */\n"
+"}\n"
+"\n"
+"QLineEdit, QComboBox, QTreeView, QSlider::groove:horizontal {\n"
+"    background-color: #3A3A3A;  /* Темный фон для ввода текста, выпадающих списков и слайдеров */\n"
+"    color: #E0E0E0;  /* Светлый текст */\n"
+"    border: 1px solid #1E90FF;  /* Ледяной синий бордюр */\n"
+"    padding: 5px;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 20px;\n"
+"    border-left-width: 1px;\n"
+"    border-left-color: #1E90FF;\n"
+"    border-left-style: solid;\n"
+"    border-top-right-radius: 5px;\n"
+"    border-bottom-right-radius: 5px;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    image: url(down_arrow.png);  /* Путь к иконке стрелки вниз */\n"
+"    width: 12px;\n"
+"    height: 12px;\n"
+"}\n"
+"\n"
+"QSlider::handle:horizontal {\n"
+"    background: #1E90FF;  /* Ледяной синий бегунок */\n"
+"    border: 1px solid #3A3A3A;\n"
+"    width: 10px;\n"
+"    margin: -5px 0; /* Уменьшение области клика */\n"
+"    border-radius: 5px;\n"
+"}\n"
+"\n"
+"QSlider::groove:horizontal {\n"
+"    height: 10px;\n"
+"    background: #3A3A3A;\n"
+"    border: 1px solid #1E90FF;\n"
+"    border-radius: 5px;\n"
+"}\n"
+"")
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.gridLayout_2 = QtWidgets.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.comport_combobox = QtWidgets.QComboBox(self.centralwidget)
+        self.comport_combobox.setObjectName("comport_combobox")
+        self.gridLayout_2.addWidget(self.comport_combobox, 0, 1, 1, 1)
         self.user_label = QtWidgets.QLabel(self.centralwidget)
         self.user_label.setObjectName("user_label")
         self.gridLayout_2.addWidget(self.user_label, 1, 0, 1, 1)
-        self.connect_label = QtWidgets.QLabel(self.centralwidget)
-        self.connect_label.setObjectName("connect_label")
-        self.gridLayout_2.addWidget(self.connect_label, 0, 0, 1, 1)
-        self.connect_button = QtWidgets.QPushButton(self.centralwidget)
-        self.connect_button.setObjectName("connect_button")
-        self.gridLayout_2.addWidget(self.connect_button, 0, 2, 1, 1)
         self.user_lineedit = QtWidgets.QLineEdit(self.centralwidget)
         self.user_lineedit.setObjectName("user_lineedit")
         self.gridLayout_2.addWidget(self.user_lineedit, 1, 1, 1, 1)
         self.data_treeview = QtWidgets.QTreeView(self.centralwidget)
         self.data_treeview.setObjectName("data_treeview")
         self.gridLayout_2.addWidget(self.data_treeview, 3, 0, 1, 4)
-        self.gesture_lineedit = QtWidgets.QLineEdit(self.centralwidget)
-        self.gesture_lineedit.setObjectName("gesture_lineedit")
-        self.gridLayout_2.addWidget(self.gesture_lineedit, 2, 1, 1, 1)
-        self.gesture_commbobox = QtWidgets.QComboBox(self.centralwidget)
-        self.gesture_commbobox.setObjectName("gesture_commbobox")
-        self.gridLayout_2.addWidget(self.gesture_commbobox, 1, 6, 1, 1)
-        self.adduser_button = QtWidgets.QPushButton(self.centralwidget)
-        self.adduser_button.setObjectName("adduser_button")
-        self.gridLayout_2.addWidget(self.adduser_button, 1, 2, 1, 1)
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setObjectName("widget")
-        self.gridLayout_2.addWidget(self.widget, 3, 5, 1, 2)
         self.addgestre_button = QtWidgets.QPushButton(self.centralwidget)
         self.addgestre_button.setObjectName("addgestre_button")
         self.gridLayout_2.addWidget(self.addgestre_button, 2, 2, 1, 1)
-        self.comport_combobox = QtWidgets.QComboBox(self.centralwidget)
-        self.comport_combobox.setObjectName("comport_combobox")
-        self.gridLayout_2.addWidget(self.comport_combobox, 0, 1, 1, 1)
-        self.disconnect_button = QtWidgets.QPushButton(self.centralwidget)
-        self.disconnect_button.setObjectName("disconnect_button")
-        self.gridLayout_2.addWidget(self.disconnect_button, 0, 3, 1, 1)
+        self.gesture_lineedit = QtWidgets.QLineEdit(self.centralwidget)
+        self.gesture_lineedit.setObjectName("gesture_lineedit")
+        self.gridLayout_2.addWidget(self.gesture_lineedit, 2, 1, 1, 1)
+        self.connect_label = QtWidgets.QLabel(self.centralwidget)
+        self.connect_label.setObjectName("connect_label")
+        self.gridLayout_2.addWidget(self.connect_label, 0, 0, 1, 1)
+        self.adduser_button = QtWidgets.QPushButton(self.centralwidget)
+        self.adduser_button.setObjectName("adduser_button")
+        self.gridLayout_2.addWidget(self.adduser_button, 1, 2, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem, 0, 4, 4, 1)
         self.gesture1_label = QtWidgets.QLabel(self.centralwidget)
         self.gesture1_label.setObjectName("gesture1_label")
         self.gridLayout_2.addWidget(self.gesture1_label, 2, 0, 1, 1)
         self.gesture2_label = QtWidgets.QLabel(self.centralwidget)
         self.gesture2_label.setObjectName("gesture2_label")
-        self.gridLayout_2.addWidget(self.gesture2_label, 1, 5, 1, 1)
+        self.gridLayout_2.addWidget(self.gesture2_label, 1, 7, 1, 1)
+        self.gesture_commbobox = QtWidgets.QComboBox(self.centralwidget)
+        self.gesture_commbobox.setObjectName("gesture_commbobox")
+        self.gridLayout_2.addWidget(self.gesture_commbobox, 1, 8, 1, 1)
+        self.user_combobox = QtWidgets.QComboBox(self.centralwidget)
+        self.user_combobox.setObjectName("user_combobox")
+        self.gridLayout_2.addWidget(self.user_combobox, 1, 6, 1, 1)
+        self.connect_button = QtWidgets.QPushButton(self.centralwidget)
+        self.connect_button.setObjectName("connect_button")
+        self.gridLayout_2.addWidget(self.connect_button, 0, 2, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 1, 5, 1, 1)
+        self.activitymap = QtWidgets.QWidget(self.centralwidget)
+        self.activitymap.setObjectName("activitymap")
+        self.gridLayout_2.addWidget(self.activitymap, 2, 5, 2, 4)
         self.startrecording_button = QtWidgets.QPushButton(self.centralwidget)
         self.startrecording_button.setObjectName("startrecording_button")
-        self.gridLayout_2.addWidget(self.startrecording_button, 0, 5, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 0, 4, 4, 1)
-        self.gridLayout_2.setColumnStretch(5, 1)
-        self.gridLayout_2.setColumnStretch(6, 10)
+        self.gridLayout_2.addWidget(self.startrecording_button, 0, 5, 1, 4)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 4, 5, 1, 1)
+        self.sensetivity_slider = QtWidgets.QSlider(self.centralwidget)
+        self.sensetivity_slider.setMaximum(30)
+        self.sensetivity_slider.setPageStep(1)
+        self.sensetivity_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.sensetivity_slider.setObjectName("sensetivity_slider")
+        self.gridLayout_2.addWidget(self.sensetivity_slider, 4, 6, 1, 3)
+        self.gridLayout_2.setColumnStretch(6, 2)
+        self.gridLayout_2.setColumnStretch(8, 2)
         self.gridLayout_3.addLayout(self.gridLayout_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -80,11 +154,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.user_label.setText(_translate("MainWindow", "Испытуемый"))
-        self.connect_label.setText(_translate("MainWindow", "Порт"))
-        self.connect_button.setText(_translate("MainWindow", "Подключиться"))
-        self.adduser_button.setText(_translate("MainWindow", "Добавить"))
         self.addgestre_button.setText(_translate("MainWindow", "Добавить"))
-        self.disconnect_button.setText(_translate("MainWindow", "Отключиться"))
+        self.connect_label.setText(_translate("MainWindow", "Порт"))
+        self.adduser_button.setText(_translate("MainWindow", "Добавить"))
         self.gesture1_label.setText(_translate("MainWindow", "Жест"))
         self.gesture2_label.setText(_translate("MainWindow", "Жест"))
+        self.connect_button.setText(_translate("MainWindow", "Подключиться"))
+        self.label_2.setText(_translate("MainWindow", "Пользователь"))
         self.startrecording_button.setText(_translate("MainWindow", "Начать запись"))
+        self.label.setText(_translate("MainWindow", "Чувствительность"))
