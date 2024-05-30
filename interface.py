@@ -72,10 +72,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.graph2.setLayout(QtWidgets.QVBoxLayout())
         self.graph2.layout().addWidget(self.graph2_canvas)
 
-        self.graph1_combobox.addItems([str(i) for i in range(1, 97)])
-        self.graph2_combobox.addItems([str(i) for i in range(1, 97)])
+        self.graph1_combobox.addItems(
+            [str(i) for i in range(1, num_channels+1)])
+        self.graph2_combobox.addItems(
+            [str(i) for i in range(1, num_channels+1)])
         self.graph1_combobox.setCurrentIndex(0)
         self.graph2_combobox.setCurrentIndex(1)
+
+        self.update_recording_label(False)
+
+    def update_recording_label(self, is_recording):
+        if is_recording:
+            self.rec_label.setStyleSheet(
+                "background-color: green; color: white;")
+            self.rec_label.setText("Запись идет")
+        else:
+            self.rec_label.setStyleSheet(
+                "background-color: red; color: black;")
+            self.rec_label.setText("Запись не идет")
 
     def update_graph1_channel(self):
         channel = int(self.graph1_combobox.currentText()) - 1
@@ -88,12 +102,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def handle_available_data(self):
         if self.serialInst.isOpen():
             handle_ready_read(self)
-            if self.data_buffer:  # Проверяем, что буфер не пуст
-                new_data = self.data_buffer[-1]  # Последние полученные данные
-                for avg_canvas in self.avg_canvases:
-                    avg_canvas.update_plot(new_data)
-                self.graph1_canvas.update_plot(new_data)
-                self.graph2_canvas.update_plot(new_data)
 
     def toggle_connection(self):
         if not self.connected:
@@ -128,6 +136,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def start_recording(self):
         self.is_recording = True
+        self.update_recording_label(True)
         self.startrecording_button.setText("Остановить запись")
         QtCore.QTimer.singleShot(
             self.record_interval, self.stop_recording)
@@ -135,6 +144,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def stop_recording(self):
         if self.is_recording:
             self.is_recording = False
+            self.update_recording_label(False)
             self.save_recorded_data()
             self.startrecording_button.setText("Начать запись")
 
@@ -347,8 +357,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.min_value = settings.get("min_value", -32768)
                 self.max_value = settings.get("max_value", 32767)
                 self.record_interval = settings.get("record_interval", 2000)
-                self.min_slider.setValue(int((self.min_value / 3276.8) + 15))
-                self.max_slider.setValue(int((self.max_value / 3276.8) + 15))
+                self.min_slider.setValue(self.min_value)
+                self.max_slider.setValue(self.max_value)
                 self.duration_combobox.setText(str(self.record_interval))
         except (FileNotFoundError, json.JSONDecodeError):
             self.min_value = -32768

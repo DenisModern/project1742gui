@@ -36,7 +36,7 @@ cmap = LinearSegmentedColormap.from_list("custom_cmap", colors)
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, chart_height=8, chart_width=12, min_value=-32768, max_value=32767):
+    def __init__(self, parent=None, chart_height=6, chart_width=15, min_value=-32768, max_value=32767):
         self.chart_height = chart_height
         self.chart_width = chart_width
         self.min_value = min_value
@@ -56,6 +56,7 @@ class Canvas(FigureCanvas):
         )
         self.ani = FuncAnimation(fig, self.animate, interval=100)
         self.cur_step = 0
+        self.buffer = []
 
         # Настройка фона и цвета текста
         self.ax.set_facecolor("#2E2E2E")  # Темный фон графика
@@ -76,15 +77,27 @@ class Canvas(FigureCanvas):
 
     def set_max_value(self, max_value):
         self.max_value = max_value
-        self.cax.set_clim(vmin=self.min_value, vmax=self.max_value)
+        if self.min_value > self.max_value:
+            self.cax.set_clim(vmin=self.min_value, vmax=self.min_value)
+        else:
+            self.cax.set_clim(vmin=self.min_value, vmax=self.max_value)
         self.draw()
 
     def update_plot(self, data):
-        reshaped_data = np.array(data).reshape(
-            (self.chart_height, self.chart_width))
-        self.Z[self.cur_step %
-               self.chart_height] = reshaped_data[self.cur_step % self.chart_height]
-        self.cur_step += 1
+        self.replace_value = (self.min_value + self.min_value) / 2
+        for i in range(len(data)):
+            if data[i] < self.min_value or data[i] > self.max_value:
+                data[i] = self.replace_value
+
+        self.buffer.append(data)
+        if len(self.buffer) == 10:
+            average_data = np.mean(self.buffer, axis=0)
+            reshaped_data = np.array(average_data).reshape(
+                (self.chart_width, self.chart_height)).T
+            self.Z[self.cur_step %
+                   self.chart_height] = reshaped_data[self.cur_step % self.chart_height]
+            self.cur_step += 1
+            self.buffer = []
 
     def animate(self, i):
         self.cax.set_array(self.Z.flatten())
@@ -132,7 +145,7 @@ class AnimatedCanvas(FigureCanvas):
 
 
 class AverageCanvas(FigureCanvas):
-    def __init__(self, parent=None, channels=range(16), maxlen=100):
+    def __init__(self, parent=None, channels=range(15), maxlen=100):
         self.channels = channels
         self.maxlen = maxlen
         self.data = np.zeros((maxlen, len(channels)))
@@ -172,6 +185,6 @@ class AverageCanvas(FigureCanvas):
         return self.lines
 
     def update_plot(self, new_data):
-        avg_data = [np.mean(new_data[ch:ch + 16]) for ch in self.channels]
+        avg_data = [np.mean(new_data[ch:ch + 15]) for ch in self.channels]
         self.data = np.roll(self.data, -1, axis=0)
         self.data[-1, :] = avg_data

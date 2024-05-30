@@ -101,6 +101,9 @@ QSlider::groove:horizontal {
       <item row="1" column="1">
        <widget class="QLineEdit" name="user_lineedit"/>
       </item>
+      <item row="3" column="3" rowspan="2" colspan="4">
+       <widget class="QWidget" name="activitymap" native="true"/>
+      </item>
       <item row="7" column="0" colspan="3">
        <widget class="QLabel" name="state_label">
         <property name="text">
@@ -114,6 +117,9 @@ QSlider::groove:horizontal {
          <string>Длительность жеста</string>
         </property>
        </widget>
+      </item>
+      <item row="7" column="6">
+       <widget class="QComboBox" name="graph2_combobox"/>
       </item>
       <item row="5" column="0">
        <widget class="QPushButton" name="delete_button">
@@ -143,6 +149,9 @@ QSlider::groove:horizontal {
         </property>
        </widget>
       </item>
+      <item row="7" column="4">
+       <widget class="QComboBox" name="graph1_combobox"/>
+      </item>
       <item row="1" column="2">
        <widget class="QPushButton" name="adduser_button">
         <property name="text">
@@ -152,6 +161,35 @@ QSlider::groove:horizontal {
       </item>
       <item row="1" column="6">
        <widget class="QComboBox" name="gesture_commbobox"/>
+      </item>
+      <item row="6" column="3" colspan="2">
+       <widget class="QWidget" name="graph1" native="true"/>
+      </item>
+      <item row="5" column="4">
+       <widget class="QSlider" name="min_slider">
+        <property name="minimum">
+         <number>-32768</number>
+        </property>
+        <property name="maximum">
+         <number>32767</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="5">
+       <widget class="QLabel" name="max_label">
+        <property name="text">
+         <string>Максимальное</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="3">
        <widget class="QLabel" name="user2_label">
@@ -183,10 +221,27 @@ QSlider::groove:horizontal {
         </property>
        </spacer>
       </item>
+      <item row="6" column="5" colspan="2">
+       <widget class="QWidget" name="graph2" native="true"/>
+      </item>
+      <item row="7" column="5">
+       <widget class="QLabel" name="graph2_label">
+        <property name="text">
+         <string>График 2</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
        <widget class="QPushButton" name="connect_button">
         <property name="text">
          <string>Подключиться</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLabel" name="graph1_label">
+        <property name="text">
+         <string>График 1</string>
         </property>
        </widget>
       </item>
@@ -196,13 +251,36 @@ QSlider::groove:horizontal {
       <item row="1" column="4">
        <widget class="QComboBox" name="user_combobox"/>
       </item>
-      <item row="6" column="0" colspan="3">
-       <widget class="QPlainTextEdit" name="com_textedit"/>
+      <item row="5" column="3">
+       <widget class="QLabel" name="min_label">
+        <property name="text">
+         <string>Минимальное</string>
+        </property>
+       </widget>
       </item>
       <item row="2" column="5">
        <widget class="QLabel" name="ms_label">
         <property name="text">
          <string>миллисекунд</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="6">
+       <widget class="QSlider" name="max_slider">
+        <property name="minimum">
+         <number>-32768</number>
+        </property>
+        <property name="maximum">
+         <number>32767</number>
+        </property>
+        <property name="pageStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
@@ -212,83 +290,15 @@ QSlider::groove:horizontal {
       <item row="0" column="1">
        <widget class="QComboBox" name="comport_combobox"/>
       </item>
-      <item row="3" column="3" rowspan="2" colspan="4">
-       <widget class="QWidget" name="activitymap" native="true"/>
+      <item row="6" column="0" colspan="3">
+       <widget class="QPlainTextEdit" name="com_textedit"/>
       </item>
-      <item row="5" column="3">
-       <widget class="QLabel" name="min_label">
+      <item row="2" column="6">
+       <widget class="QLabel" name="rec_label">
         <property name="text">
-         <string>Минимальное</string>
+         <string>Запись не идет</string>
         </property>
        </widget>
-      </item>
-      <item row="5" column="4">
-       <widget class="QSlider" name="min_slider">
-        <property name="minimum">
-         <number>-32768</number>
-        </property>
-        <property name="maximum">
-         <number>0</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>-32768</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="5">
-       <widget class="QLabel" name="max_label">
-        <property name="text">
-         <string>Максимальное</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="6">
-       <widget class="QSlider" name="max_slider">
-        <property name="maximum">
-         <number>32767</number>
-        </property>
-        <property name="pageStep">
-         <number>1</number>
-        </property>
-        <property name="value">
-         <number>32767</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="3" colspan="2">
-       <widget class="QWidget" name="graph1" native="true"/>
-      </item>
-      <item row="6" column="5" colspan="2">
-       <widget class="QWidget" name="graph2" native="true"/>
-      </item>
-      <item row="7" column="3">
-       <widget class="QLabel" name="graph1_label">
-        <property name="text">
-         <string>График 1</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="5">
-       <widget class="QLabel" name="graph2_label">
-        <property name="text">
-         <string>График 2</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="4">
-       <widget class="QComboBox" name="graph1_combobox"/>
-      </item>
-      <item row="7" column="6">
-       <widget class="QComboBox" name="graph2_combobox"/>
       </item>
      </layout>
     </item>

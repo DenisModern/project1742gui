@@ -1,4 +1,5 @@
 {
-    "sensitivity": 0.0,
-    "record_interval": 1000
+    "min_value": -32768,
+    "max_value": 32767,
+    "record_interval": 2000
 }

@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtSerialPort
 import numpy as np
 
 num_channels = 96
-chart_height = 8
+chart_height = 6
 chart_width = num_channels // chart_height
 
 data_buffer = b''
@@ -10,14 +10,12 @@ recent_data = []
 
 
 def handle_ready_read(self):
-    global data_buffer, recent_data
+    global data_buffer, recent_data, shared_data_buffer
     while self.serialInst.in_waiting > 0:
         data_buffer += self.serialInst.read(self.serialInst.in_waiting)
 
         start_marker = b'<START>'
         end_marker = b'<END>'
-        start16_marker = b'<START16>'
-        end16_marker = b'<END16>'
 
         while start_marker in data_buffer and end_marker in data_buffer:
             start_index = data_buffer.find(start_marker)
@@ -27,21 +25,20 @@ def handle_ready_read(self):
             data_buffer = data_buffer[end_index:]
 
             main_data = complete_message[len(start_marker):-len(end_marker)]
-            data_blocks = main_data.split(end16_marker)
+            data_bytes = main_data
             complete_data = []
 
-            for block in data_blocks:
-                if start16_marker in block:
-                    block_start = block.find(
-                        start16_marker) + len(start16_marker)
-                    data_bytes = block[block_start:]
-                    for i in range(0, len(data_bytes), 2):
-                        if i + 1 < len(data_bytes):
-                            value = int.from_bytes(
-                                data_bytes[i:i+2], byteorder='little', signed=True)
-                            complete_data.append(value)
+            for i in range(0, len(data_bytes), 2):
+                if i + 1 < len(data_bytes):
+                    value = int.from_bytes(
+                        data_bytes[i:i+2], byteorder='little', signed=True)
+                    complete_data.append(value)
 
             if len(complete_data) == num_channels:
+                complete_data[34] = 2000
+                complete_data[49] = 2000
+                complete_data[13] = 2000
+                complete_data[40] = 2000
                 self.record_data(complete_data)
                 recent_data.append(complete_data)
                 if len(recent_data) > 5:
@@ -49,6 +46,10 @@ def handle_ready_read(self):
 
                 avg_data = np.mean(recent_data, axis=0).astype(int).tolist()
                 self.update_plot(avg_data)
+                for avg_canvas in self.avg_canvases:
+                    avg_canvas.update_plot(complete_data)
+                self.graph1_canvas.update_plot(complete_data)
+                self.graph2_canvas.update_plot(complete_data)
 
                 # Вывод данных в com_textedit
                 self.com_textedit.appendPlainText(str(complete_data))
