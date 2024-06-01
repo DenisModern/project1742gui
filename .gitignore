@@ -1,4 +1,5 @@
 env/
+
 __pycache__/
 __pycache__/handlers.cpython-310.pyc
 __pycache__/interface.cpython-310.pyc
@@ -15531,3 +15532,4 @@ data/person2/unclenching.json
 __pycache__/canvas.cpython-310.pyc
 __pycache__/mainwindow_ui.cpython-310.pyc
 *.pyc
+.gitignore
