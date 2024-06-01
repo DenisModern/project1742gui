@@ -1,10 +1,50 @@
 [
     {
-        "name": "finger2",
+        "name": "rest",
         "index": 1
     },
     {
-        "name": "rest",
+        "name": "fist_clench",
         "index": 2
+    },
+    {
+        "name": "right_swipe",
+        "index": 3
+    },
+    {
+        "name": "left_swipe",
+        "index": 4
+    },
+    {
+        "name": "thumbs_up",
+        "index": 5
+    },
+    {
+        "name": "thumbs_down",
+        "index": 6
+    },
+    {
+        "name": "unclenching",
+        "index": 7
+    },
+    {
+        "name": "clockwise_rotation",
+        "index": 8
+    },
+    {
+        "name": "counterclockwise_rotation",
+        "index": 9
+    },
+    {
+        "name": "ok",
+        "index": 10
+    },
+    {
+        "name": "stop",
+        "index": 11
+    },
+    {
+        "name": "two",
+        "index": 12
     }
 ]

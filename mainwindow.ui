@@ -76,9 +76,51 @@ QSlider::groove:horizontal {
     border: 1px solid #1E90FF;
     border-radius: 5px;
 }
+
+#numrecordings_label {
+	font: 18pt &quot;Segoe UI&quot;;
+}
 </string>
    </property>
-   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,5,0,2">
+   <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,2">
+    <item row="0" column="3">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="avg1" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="avg2" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="avg3" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="avg4" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="avg5" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="avg6" native="true"/>
+      </item>
+     </layout>
+    </item>
     <item row="0" column="1">
      <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0" columnstretch="0,0,0,0,1,0,1">
       <item row="3" column="0" rowspan="2" colspan="3">
@@ -205,22 +247,6 @@ QSlider::groove:horizontal {
         </property>
        </widget>
       </item>
-      <item row="5" column="1" colspan="2">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="6" column="5" colspan="2">
        <widget class="QWidget" name="graph2" native="true"/>
       </item>
@@ -300,43 +326,33 @@ QSlider::groove:horizontal {
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item row="0" column="3">
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QWidget" name="avg1" native="true"/>
-      </item>
-      <item>
-       <widget class="QWidget" name="avg2" native="true"/>
-      </item>
-      <item>
-       <widget class="QWidget" name="avg3" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>0</height>
-         </size>
+      <item row="5" column="1">
+       <widget class="QLabel" name="numrecordingstext_label">
+        <property name="text">
+         <string>Записей жеста</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QWidget" name="avg4" native="true"/>
-      </item>
-      <item>
-       <widget class="QWidget" name="avg5" native="true"/>
-      </item>
-      <item>
-       <widget class="QWidget" name="avg6" native="true"/>
+      <item row="5" column="2">
+       <widget class="QLabel" name="numrecordings_label">
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>18</pointsize>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

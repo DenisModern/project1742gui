@@ -51,12 +51,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.connected = False
         self.update_min_value()
         self.update_max_value()
-        self.data_buffer = []
+        self.data_buffer_g = []
+        self.gesture_data_cache = {}
 
         self.model = QtGui.QStandardItemModel()
         self.data_treeview.setModel(self.model)
         self.load_existing_data()
-        self.load_combobox_data()
+        current_gesture = self.gesture_commbobox.currentText()
+        self.load_combobox_data(current_gesture)
 
         self.avg_canvases = [AverageCanvas(
             self, channels=range(i * 16, (i + 1) * 16)) for i in range(6)]
@@ -105,7 +107,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def toggle_connection(self):
         if not self.connected:
-            self.data_buffer = []  # Инициализируем буфер данных при подключении
             self.connect_serial()
         else:
             self.disconnect_serial()
@@ -148,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.save_recorded_data()
             self.startrecording_button.setText("Начать запись")
 
-    def save_recorded_data(self):
+    def save_recorded_data(self, n=50):  # Добавляем параметр n
         user = self.user_combobox.currentText()
         gesture = self.gesture_commbobox.currentText()
 
@@ -166,16 +167,49 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except (FileNotFoundError, json.JSONDecodeError):
             data = {"name": gesture, "index": 1, "data": []}
 
-        processed_data = [process_data(row) for row in self.data_buffer]
+        processed_data = [process_data(row) for row in self.data_buffer_g]
+
         transposed_data = list(map(list, zip(*processed_data)))
+        for i in range(len(transposed_data)):
+            if len(transposed_data[i]) < n:
+                transposed_data[i] = [
+                    0] * (n - len(transposed_data[i])) + transposed_data[i]
+            else:
+                transposed_data[i] = transposed_data[i][-n:]
+
         data["data"].append(transposed_data)
 
         with open(gesture_file, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
-        self.data_buffer = []  # Очищаем буфер данных после сохранения
+        self.data_buffer_g = []  # Очищаем буфер данных после сохранения
         self.load_existing_data()  # Обновление QTreeView
-        self.load_combobox_data()  # Обновление combobox
+        self.load_combobox_data(gesture)  # Обновление combobox
+        num_recordings = len(data.get("data", []))
+        self.numrecordings_label.setText(str(num_recordings))
+
+    def load_combobox_data(self, selected_gesture=None):
+        self.user_combobox.clear()
+        self.gesture_commbobox.clear()
+
+        data_folder = "data"
+        if os.path.exists(data_folder):
+            for user_folder in os.listdir(data_folder):
+                user_path = os.path.join(data_folder, user_folder)
+                if os.path.isdir(user_path):
+                    self.user_combobox.addItem(user_folder)
+
+        try:
+            with open("gestures.json", "r", encoding="utf-8") as file:
+                gestures = json.load(file)
+                for gesture in gestures:
+                    self.gesture_commbobox.addItem(gesture["name"])
+            if selected_gesture:
+                index = self.gesture_commbobox.findText(selected_gesture)
+                if index >= 0:
+                    self.gesture_commbobox.setCurrentIndex(index)
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
 
     def add_user(self):
         user_name = self.user_lineedit.text().strip()
@@ -206,7 +240,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.gesture_commbobox.addItem(gesture_name)
                     self.gesture_lineedit.clear()
                     self.update_state(f"Жест {gesture_name} добавлен")
-                    self.load_combobox_data()  # Обновление combobox
+                    # Обновление combobox
+                    current_gesture = self.gesture_commbobox.currentText()
+                    self.load_combobox_data(current_gesture)
 
     def delete_selected(self):
         index = self.data_treeview.currentIndex()
@@ -244,7 +280,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.update_state(f"Запись {item.text()} удалена")
 
         self.load_existing_data()
-        self.load_combobox_data()  # Обновление combobox
+        current_gesture = self.gesture_commbobox.currentText()
+        self.load_combobox_data(current_gesture)
 
     def update_min_value(self):
         min_value = self.min_slider.value()
@@ -308,47 +345,35 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         data_folder = "data"
 
         if os.path.exists(data_folder):
-            for user_folder in os.listdir(data_folder):
+            user_folders = [f for f in os.listdir(
+                data_folder) if os.path.isdir(os.path.join(data_folder, f))]
+            for user_folder in user_folders:
                 user_path = os.path.join(data_folder, user_folder)
-                if os.path.isdir(user_path):
-                    user_item = QtGui.QStandardItem(user_folder)
-                    root.appendRow(user_item)
-                    gesture_folder_item = QtGui.QStandardItem("Жесты")
-                    user_item.appendRow(gesture_folder_item)
-                    for gesture_file in os.listdir(user_path):
-                        gesture_path = os.path.join(user_path, gesture_file)
-                        if os.path.isfile(gesture_path) and gesture_file.endswith(".json"):
-                            with open(gesture_path, "r", encoding="utf-8") as file:
-                                gesture_data = json.load(file)
-                            gesture_name = gesture_data.get(
-                                "name", os.path.splitext(gesture_file)[0])
-                            gesture_item = QtGui.QStandardItem(gesture_name)
-                            gesture_folder_item.appendRow(gesture_item)
-                            for idx, record in enumerate(gesture_data.get("data", [])):
-                                record_item = QtGui.QStandardItem(
-                                    f"Запись {idx + 1}")
-                                gesture_item.appendRow(record_item)
+                user_item = QtGui.QStandardItem(user_folder)
+                root.appendRow(user_item)
+                gesture_folder_item = QtGui.QStandardItem("Жесты")
+                user_item.appendRow(gesture_folder_item)
+
+                gesture_files = [f for f in os.listdir(
+                    user_path) if f.endswith(".json")]
+                for gesture_file in gesture_files:
+                    gesture_path = os.path.join(user_path, gesture_file)
+                    with open(gesture_path, "r", encoding="utf-8") as file:
+                        gesture_data = json.load(file)
+                        self.gesture_data_cache[gesture_path] = gesture_data
+
+                    gesture_name = gesture_data.get(
+                        "name", os.path.splitext(gesture_file)[0])
+                    gesture_item = QtGui.QStandardItem(gesture_name)
+                    gesture_folder_item.appendRow(gesture_item)
+
+                    num_recordings = len(gesture_data.get("data", []))
+
+                    for idx in range(num_recordings):
+                        record_item = QtGui.QStandardItem(f"Запись {idx + 1}")
+                        gesture_item.appendRow(record_item)
 
         self.restore_expanded_items(expanded_items)
-
-    def load_combobox_data(self):
-        self.user_combobox.clear()
-        self.gesture_commbobox.clear()
-
-        data_folder = "data"
-        if os.path.exists(data_folder):
-            for user_folder in os.listdir(data_folder):
-                user_path = os.path.join(data_folder, user_folder)
-                if os.path.isdir(user_path):
-                    self.user_combobox.addItem(user_folder)
-
-        try:
-            with open("gestures.json", "r", encoding="utf-8") as file:
-                gestures = json.load(file)
-                for gesture in gestures:
-                    self.gesture_commbobox.addItem(gesture["name"])
-        except (FileNotFoundError, json.JSONDecodeError):
-            pass
 
     def load_settings(self):
         try:
@@ -378,7 +403,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.chart.update_plot(value)
 
     def record_data(self, data):
-        self.data_buffer.append(data)
+        if self.is_recording:
+            self.data_buffer_g.append(data)
 
     def update_state(self, message):
         self.state_label.setText(message)

@@ -1,3 +1,4 @@
+env/
 __pycache__/handlers.cpython-310.pyc
 __pycache__/interface.cpython-310.pyc
 env/Lib/site-packages/decorator.py
@@ -15512,3 +15513,20 @@ __pycache__/canvas.cpython-310.pyc
 __pycache__/mainwindow_ui.cpython-310.pyc
 __pycache__/canvas.cpython-310.pyc
 __pycache__/mainwindow_ui.cpython-310.pyc
+__pycache__/canvas.cpython-310.pyc
+__pycache__/mainwindow_ui.cpython-310.pyc
+data/person2/clockwise_rotation.json
+data/person2/counterclockwise_rotation.json
+data/person2/fist_clench.json
+data/person2/left_swipe.json
+data/person2/ok.json
+data/person2/rest.json
+data/person2/right_swipe.json
+data/person2/stop.json
+data/person2/thumbs_down.json
+data/person2/thumbs_up.json
+data/person2/two.json
+data/person2/unclenching.json
+__pycache__/canvas.cpython-310.pyc
+__pycache__/mainwindow_ui.cpython-310.pyc
+*.pyc

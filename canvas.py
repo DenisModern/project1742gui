@@ -4,7 +4,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.animation import FuncAnimation
 from matplotlib.colors import LinearSegmentedColormap
 
-# Создаем пользовательскую colormap с 50 цветами для плавного градиента
 colors = [
     "#0c77be", "#0c78bb", "#0d79b9", "#0d7bb7", "#0e7cb5", "#0f7db3", "#0f7fb1", "#1080af",
     "#1081ad", "#1183ab", "#1284a9", "#1285a7", "#1387a5", "#1488a3", "#1489a1", "#158b9f",
@@ -54,7 +53,7 @@ class Canvas(FigureCanvas):
             vmin=self.min_value,
             vmax=self.max_value
         )
-        self.ani = FuncAnimation(fig, self.animate, interval=100)
+        self.ani = FuncAnimation(fig, self.animate, interval=100, blit=True)
         self.cur_step = 0
         self.buffer = []
 
@@ -84,7 +83,7 @@ class Canvas(FigureCanvas):
         self.draw()
 
     def update_plot(self, data):
-        self.replace_value = (self.min_value + self.min_value) / 2
+        self.replace_value = (self.min_value + self.max_value) / 2
         for i in range(len(data)):
             if data[i] < self.min_value or data[i] > self.max_value:
                 data[i] = self.replace_value
@@ -93,15 +92,14 @@ class Canvas(FigureCanvas):
         if len(self.buffer) == 10:
             average_data = np.mean(self.buffer, axis=0)
             reshaped_data = np.array(average_data).reshape(
-                (self.chart_width, self.chart_height)).T
-            self.Z[self.cur_step %
-                   self.chart_height] = reshaped_data[self.cur_step % self.chart_height]
-            self.cur_step += 1
+                (self.chart_height, self.chart_width)).T
+            self.Z = np.roll(self.Z, -1, axis=0)
+            self.Z[-1, :] = reshaped_data.flatten()[:self.chart_width]
             self.buffer = []
 
     def animate(self, i):
-        self.cax.set_array(self.Z.flatten())
-        return self.cax,
+        self.cax.set_array(self.Z)
+        return [self.cax]
 
 
 class AnimatedCanvas(FigureCanvas):
@@ -157,7 +155,6 @@ class AverageCanvas(FigureCanvas):
 
         self.lines = []
         for i in range(len(channels)):
-            # Установите нужную толщину линии
             line, = self.ax.plot(
                 self.data[:, i], color='#1E90FF', linewidth=0.5)
             self.lines.append(line)
